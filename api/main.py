@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -39,11 +38,16 @@ class ChatResponse(BaseModel):
 conversations = {}
 
 # Carregar FAISS e embeddings
-FAISS_INDEX_PATH = "./FAISS/faiss_index.bin"
-METADATA_PATH = "./FAISS/text_chunks.pkl"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FAISS_INDEX_PATH = os.path.join(BASE_DIR, "FAISS/index.faiss")
+METADATA_PATH = os.path.join(BASE_DIR, "FAISS/text_chunks.pkl")
 
 def load_faiss_index(index_path, metadata_path):
     """Carrega o índice FAISS e os chunks de texto."""
+    if not os.path.exists(index_path) or not os.path.exists(metadata_path):
+        print(f"Erro: Arquivo {index_path} ou {metadata_path} não encontrado.")
+        return None, []
+    
     try:
         index = faiss.read_index(index_path)
         with open(metadata_path, "rb") as f:

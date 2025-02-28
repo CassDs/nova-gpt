@@ -20,7 +20,7 @@ interface Conversation {
 const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
   return (
     <div className={`flex mb-6 animate-slide-in ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-      <div className="flex items-start max-w-[80%]">
+      <div className="flex items-start max-w-[80%] md:max-w-[70%]">
         {message.role === 'assistant' && (
           <div className="mr-3 mt-1">
             <div className="flex h-8 w-8 rounded-full items-center justify-center overflow-hidden">
@@ -35,16 +35,16 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
         <div className="flex flex-col">
           <div className="flex items-center mb-1">
             {message.role === 'assistant' && (
-              <span className="dark:text-white light:text-gray-800 font-medium mr-2">Nova Assistant</span>
+              <span className="text-white font-medium mr-2">Nova Assistant</span>
             )}
             {message.timestamp && (
-              <span className="dark:text-gray-400 light:text-gray-500 text-xs">{message.timestamp}</span>
+              <span className="text-gray-400 text-xs">{message.timestamp}</span>
             )}
           </div>
           <div
             className={`px-4 py-3 rounded-lg ${
               message.role === 'assistant'
-                ? 'dark:bg-nova-dark-lighter dark:text-white light:bg-blue-100 light:text-gray-800'
+                ? 'bg-nova-dark-lighter text-white'
                 : 'bg-nova-blue text-white'
             }`}
           >
@@ -58,16 +58,16 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
 
 const EmptyConversation = ({ onNewConversation }: { onNewConversation: () => void }) => {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-6">
-      <div className="mb-6 w-24 h-24 rounded-full overflow-hidden">
+    <div className="flex flex-col items-center justify-center h-full text-center p-4 md:p-6">
+      <div className="mb-6 w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden">
         <img 
           src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
           alt="Nova Logo" 
           className="w-full h-full object-cover"
         />
       </div>
-      <h2 className="text-2xl font-bold dark:text-white light:text-gray-800 mb-3">Nova Assistant</h2>
-      <p className="dark:text-gray-400 light:text-gray-600 mb-6 max-w-md">
+      <h2 className="text-xl md:text-2xl font-bold text-white mb-3">Nova Assistant</h2>
+      <p className="text-gray-400 mb-6 max-w-md text-sm md:text-base">
         Seu assistente para FICO Blaze Advisor. Como posso ajudar você hoje?
       </p>
       <button 
@@ -175,8 +175,8 @@ const Chat = () => {
   }, [currentConversation?.messages]);
 
   return (
-    <div className="flex flex-col h-full dark:bg-nova-dark light:bg-[#E0F2FF]">
-      <div className="flex items-center p-5 border-b dark:border-nova-dark-border light:border-blue-200">
+    <div className="flex flex-col h-full bg-nova-dark">
+      <div className="flex items-center p-4 md:p-5 border-b border-nova-dark-border">
         <div className="flex items-center">
           <div className="h-6 w-6 rounded-full flex items-center justify-center mr-3 overflow-hidden">
             <img 
@@ -185,19 +185,19 @@ const Chat = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="dark:text-white light:text-gray-800 font-medium">Nova Assistant</span>
+          <span className="text-white font-medium">Nova Assistant</span>
         </div>
         <div className="ml-auto">
           <button 
             onClick={createNewConversation}
-            className="flex items-center dark:text-gray-400 light:text-gray-600 hover:text-nova-blue transition-colors"
+            className="flex items-center text-gray-400 hover:text-white transition-colors"
           >
             <MessageSquarePlus size={20} />
           </button>
         </div>
       </div>
 
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-3 md:p-4 overflow-y-auto">
         {!currentConversation ? (
           <EmptyConversation onNewConversation={createNewConversation} />
         ) : (
@@ -217,8 +217,8 @@ const Chat = () => {
                       />
                     </div>
                   </div>
-                  <div className="px-4 py-3 rounded-lg dark:bg-nova-dark-lighter light:bg-blue-100">
-                    <LoadingSpinner size="sm" color="dark:border-white light:border-gray-600" />
+                  <div className="px-4 py-3 rounded-lg bg-nova-dark-lighter">
+                    <LoadingSpinner size="sm" color="border-white" />
                   </div>
                 </div>
               </div>
@@ -228,7 +228,7 @@ const Chat = () => {
         )}
       </div>
 
-      <div className="p-4 border-t dark:border-nova-dark-border light:border-blue-200">
+      <div className="p-3 md:p-4 border-t border-nova-dark-border">
         <div className="relative">
           <input
             type="text"
@@ -237,18 +237,18 @@ const Chat = () => {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={!currentConversation}
-            className="w-full dark:bg-nova-dark-lighter light:bg-blue-50 dark:border-nova-dark-border light:border-blue-200 dark:text-white light:text-gray-800 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-nova-blue disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-nova-dark-lighter border border-nova-dark-border text-white rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-nova-blue disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             onClick={handleSendMessage}
             disabled={!currentConversation || !inputValue.trim()}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center dark:text-gray-400 light:text-gray-500 hover:text-nova-blue disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={18} />
           </button>
         </div>
         <div className="flex justify-center mt-2">
-          <span className="text-xs dark:text-gray-500 light:text-gray-500">Nova - Seu assistente FICO Blaze Advisor</span>
+          <span className="text-xs text-gray-500">Nova - Seu assistente FICO Blaze Advisor</span>
         </div>
       </div>
     </div>

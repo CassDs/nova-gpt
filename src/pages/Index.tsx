@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Chat from '../components/Chat';
 import IntroEffect from '../components/IntroEffect';
-import { Menu } from 'lucide-react';
+import { Menu, MessageSquarePlus } from 'lucide-react';
 
 const Index = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -51,7 +51,7 @@ const Index = () => {
       {showIntro && <IntroEffect onComplete={handleIntroComplete} />}
       
       <div className={`flex h-screen overflow-hidden transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        <div className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64 md:w-64' : 'w-0 md:w-16'}`}>
+        <div className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64 md:w-64' : 'w-0 md:w-16'} ${!sidebarOpen && 'hidden md:block'}`}>
           <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
         </div>
 

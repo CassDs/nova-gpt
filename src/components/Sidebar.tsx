@@ -30,9 +30,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     <div 
       className={`fixed md:relative z-20 flex flex-col h-full bg-nova-dark border-r border-nova-dark-border transition-all duration-300 ${
         isOpen 
-          ? 'w-64 left-0 opacity-100' 
-          : 'w-0 -left-64 md:w-16 md:left-0 md:opacity-100 opacity-0'
+          ? 'w-64 left-0 opacity-100 visible' 
+          : 'w-0 -left-64 md:w-16 md:left-0 md:opacity-100 opacity-0 md:visible invisible'
       }`}
+      style={{ overflow: 'hidden' }}
     >
       <div className="flex items-center justify-between p-5 border-b border-nova-dark-border">
         <div className="flex items-center space-x-2 overflow-hidden">
@@ -58,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       
       <div className={`flex-1 p-4 overflow-y-auto ${!isOpen && 'md:p-2'}`}>
         <SidebarItem
-          icon={<MessageCircle size={18} />}
+          icon={<MessageSquarePlus size={18} />}
           label="Nova conversa"
         />
       </div>

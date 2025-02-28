@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Send, MessageSquarePlus } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 
 interface Message {
@@ -8,6 +8,13 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp?: string;
+}
+
+interface Conversation {
+  id: string;
+  title: string;
+  messages: Message[];
+  createdAt: Date;
 }
 
 const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
@@ -49,38 +56,108 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
   );
 };
 
+const EmptyConversation = ({ onNewConversation }: { onNewConversation: () => void }) => {
+  return (
+    <div className="flex flex-col items-center justify-center h-full text-center p-6">
+      <div className="mb-6 w-24 h-24 rounded-full overflow-hidden">
+        <img 
+          src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
+          alt="Nova Logo" 
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <h2 className="text-2xl font-bold text-white mb-3">Nova Assistant</h2>
+      <p className="text-gray-400 mb-6 max-w-md">
+        Seu assistente para FICO Blaze Advisor. Como posso ajudar você hoje?
+      </p>
+      <button 
+        onClick={onNewConversation}
+        className="flex items-center bg-nova-blue hover:bg-opacity-90 text-white px-4 py-2 rounded-md transition-colors"
+      >
+        <MessageSquarePlus size={18} className="mr-2" />
+        <span>Nova Conversa</span>
+      </button>
+    </div>
+  );
+};
+
 const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setMessages([
-        {
-          id: '1',
-          role: 'assistant',
-          content: 'Olá! Sou o Nova, seu assistente para FICO Blaze Advisor. Como posso ajudar você hoje?',
-          timestamp: '22:49'
-        }
-      ]);
-    }, 2000);
+  // Função para obter a conversa atual
+  const currentConversation = currentConversationId 
+    ? conversations.find(conv => conv.id === currentConversationId) 
+    : null;
 
-    return () => clearTimeout(timer);
-  }, []);
+  // Função para criar nova conversa
+  const createNewConversation = () => {
+    const newConversationId = Date.now().toString();
+    const newConversation: Conversation = {
+      id: newConversationId,
+      title: 'Nova Conversa',
+      messages: [],
+      createdAt: new Date()
+    };
 
+    setConversations([...conversations, newConversation]);
+    setCurrentConversationId(newConversationId);
+  };
+
+  // Função para enviar mensagem
   const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || !currentConversationId) return;
 
-    const newMessage: Message = {
+    const now = new Date();
+    const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: inputValue,
+      timestamp
     };
 
-    setMessages((prev) => [...prev, newMessage]);
+    // Adicionar mensagem do usuário
+    const updatedConversations = conversations.map(conv => {
+      if (conv.id === currentConversationId) {
+        return {
+          ...conv,
+          messages: [...conv.messages, userMessage]
+        };
+      }
+      return conv;
+    });
+
+    setConversations(updatedConversations);
     setInputValue('');
+    
+    // Simular resposta do assistente
+    setIsLoading(true);
+    setTimeout(() => {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Obrigado por sua mensagem. Como posso ajudar com FICO Blaze Advisor hoje?',
+        timestamp: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+      };
+      
+      setConversations(prevConversations => 
+        prevConversations.map(conv => {
+          if (conv.id === currentConversationId) {
+            return {
+              ...conv,
+              messages: [...conv.messages, assistantMessage]
+            };
+          }
+          return conv;
+        })
+      );
+      setIsLoading(false);
+    }, 1500);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -89,6 +166,13 @@ const Chat = () => {
       handleSendMessage();
     }
   };
+
+  // Efeito para scrollar para o fim das mensagens
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentConversation?.messages]);
 
   return (
     <div className="flex flex-col h-full">
@@ -103,32 +187,43 @@ const Chat = () => {
           </div>
           <span className="text-white font-medium">Nova Assistant</span>
         </div>
+        <div className="ml-auto">
+          <button 
+            onClick={createNewConversation}
+            className="flex items-center text-gray-400 hover:text-white transition-colors"
+          >
+            <MessageSquarePlus size={20} />
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-full">
-            <div className="text-center">
-              <div className="inline-block mb-4">
-                <div className="relative">
-                  <div className="h-16 w-16 rounded-full border-2 border-nova-blue opacity-50 animate-pulse-ring"></div>
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full overflow-hidden">
-                    <img 
-                      src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
-                      alt="Nova Logo" 
-                      className="w-full h-full object-cover"
-                    />
+        {!currentConversation ? (
+          <EmptyConversation onNewConversation={createNewConversation} />
+        ) : (
+          <div className="space-y-4">
+            {currentConversation.messages.map((message) => (
+              <ChatBubble key={message.id} message={message} />
+            ))}
+            {isLoading && (
+              <div className="flex justify-start mb-6">
+                <div className="flex items-start">
+                  <div className="mr-3 mt-1">
+                    <div className="flex h-8 w-8 rounded-full items-center justify-center overflow-hidden">
+                      <img 
+                        src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
+                        alt="Nova Logo" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  <div className="px-4 py-3 rounded-lg bg-nova-dark-lighter">
+                    <LoadingSpinner size="sm" color="border-white" />
                   </div>
                 </div>
               </div>
-              <p className="text-white animate-pulse">Carregando...</p>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {messages.map((message) => (
-              <ChatBubble key={message.id} message={message} />
-            ))}
+            )}
+            <div ref={messagesEndRef} />
           </div>
         )}
       </div>
@@ -141,11 +236,13 @@ const Chat = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full bg-nova-dark-lighter border border-nova-dark-border text-white rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-nova-blue"
+            disabled={!currentConversation}
+            className="w-full bg-nova-dark-lighter border border-nova-dark-border text-white rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-nova-blue disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             onClick={handleSendMessage}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"
+            disabled={!currentConversation || !inputValue.trim()}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={18} />
           </button>

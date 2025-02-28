@@ -59,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       
       <div className={`flex-1 p-4 overflow-y-auto ${!isOpen && 'md:p-2'}`}>
         <SidebarItem
-          icon={<MessageSquarePlus size={18} />}
+          icon={<MessageCircle size={18} />}
           label="Nova conversa"
         />
       </div>

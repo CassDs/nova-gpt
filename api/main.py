@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -57,27 +58,51 @@ def load_faiss_index(index_path, metadata_path):
         print(f"Erro ao carregar o índice FAISS: {e}")
         return None, []
 
+print(f"Verificando arquivos FAISS: {FAISS_INDEX_PATH} e {METADATA_PATH}")
 index, chunks = load_faiss_index(FAISS_INDEX_PATH, METADATA_PATH)
+print(f"Índice FAISS carregado: {index is not None}, Número de chunks: {len(chunks) if chunks else 0}")
 
 # Carregar modelo de embeddings
-embedding_model = SentenceTransformer("BAAI/bge-m3")
+try:
+    print("Inicializando modelo de embeddings...")
+    embedding_model = SentenceTransformer("BAAI/bge-m3")
+    print("Modelo de embeddings carregado com sucesso")
+except Exception as e:
+    print(f"Erro ao carregar o modelo de embeddings: {e}")
+    embedding_model = None
 
 # Cliente OpenAI
-openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    print("AVISO: OPENAI_API_KEY não definida no arquivo .env!")
+else:
+    print("OPENAI_API_KEY encontrada")
+
+openai_client = OpenAI(api_key=api_key)
 
 def search_faiss(query, top_k=5):
     """Busca os chunks mais relevantes no FAISS."""
-    if index is None:
+    if index is None or embedding_model is None:
+        print("Índice FAISS ou modelo de embeddings não disponível")
         return []
     
-    query_embedding = embedding_model.encode([query], convert_to_numpy=True)
-    D, I = index.search(query_embedding, top_k)
-    results = [chunks[i] for i in I[0] if i != -1]
-    return results
+    try:
+        print(f"Gerando embedding para a consulta: '{query}'")
+        query_embedding = embedding_model.encode([query], convert_to_numpy=True)
+        D, I = index.search(query_embedding, top_k)
+        results = [chunks[i] for i in I[0] if i != -1]
+        print(f"Busca FAISS concluída: {len(results)} resultados encontrados")
+        return results
+    except Exception as e:
+        print(f"Erro na busca FAISS: {e}")
+        return []
 
 def generate_response(query, retrieved_texts, conversation_id):
     """Gera uma resposta considerando o histórico da conversa."""
+    print(f"Gerando resposta para: '{query}' (ID da conversa: {conversation_id})")
+    
     if not retrieved_texts:
+        print("Nenhum texto relevante encontrado")
         return "Não encontrei essa informação no material."
 
     context = "\n".join(retrieved_texts)
@@ -87,6 +112,9 @@ def generate_response(query, retrieved_texts, conversation_id):
     if conversation_id in conversations:
         # Pegar os últimos 5 turnos
         conversation_history = conversations[conversation_id][-10:]
+        print(f"Histórico da conversa encontrado: {len(conversation_history)} mensagens")
+    else:
+        print("Nenhum histórico de conversa encontrado")
 
     # Criar um histórico concatenado
     history_text = "\n".join(conversation_history)
@@ -114,6 +142,7 @@ def generate_response(query, retrieved_texts, conversation_id):
     """
 
     try:
+        print("Enviando solicitação para OpenAI")
         response = openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -124,6 +153,7 @@ def generate_response(query, retrieved_texts, conversation_id):
         )
         
         response_text = response.choices[0].message.content
+        print("Resposta gerada com sucesso")
         
         # Atualizar o histórico
         if conversation_id not in conversations:
@@ -134,12 +164,13 @@ def generate_response(query, retrieved_texts, conversation_id):
         
         return response_text
     except Exception as e:
-        print(f"Erro ao gerar resposta: {e}")
+        print(f"Erro ao gerar resposta com OpenAI: {e}")
         return "Desculpe, ocorreu um erro ao processar sua solicitação."
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     try:
+        print(f"Recebida solicitação de chat: {request.message}, ID: {request.conversation_id}")
         # Gerar ID de conversa se não existir
         conversation_id = request.conversation_id or str(len(conversations) + 1)
         
@@ -149,20 +180,37 @@ async def chat(request: ChatRequest):
         # Gerar resposta
         response = generate_response(request.message, retrieved_texts, conversation_id)
         
+        print(f"Resposta enviada para o cliente, ID da conversa: {conversation_id}")
         return {
             "response": response,
             "conversation_id": conversation_id
         }
     except Exception as e:
+        print(f"Erro no endpoint /api/chat: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/conversations/{conversation_id}")
 async def get_conversation(conversation_id: str):
+    print(f"Solicitação para obter conversa ID: {conversation_id}")
     if conversation_id not in conversations:
+        print(f"Conversa não encontrada: {conversation_id}")
         raise HTTPException(status_code=404, detail="Conversa não encontrada")
     
+    print(f"Devolvendo histórico com {len(conversations[conversation_id])} mensagens")
     return {"history": conversations[conversation_id]}
+
+# Rota de verificação de saúde do serviço
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "online",
+        "faiss_index": index is not None,
+        "embedding_model": embedding_model is not None,
+        "openai_api_key": api_key is not None,
+        "conversations_count": len(conversations)
+    }
 
 if __name__ == "__main__":
     import uvicorn
+    print("Iniciando servidor FastAPI...")
     uvicorn.run(app, host="0.0.0.0", port=8000)

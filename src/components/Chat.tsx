@@ -16,7 +16,7 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
       <div className="flex items-start max-w-[80%]">
         {message.role === 'assistant' && (
           <div className="mr-3 mt-1">
-            <div className="flex h-8 w-8 rounded-full bg-nova-blue items-center justify-center overflow-hidden">
+            <div className="flex h-8 w-8 rounded-full items-center justify-center overflow-hidden">
               <img 
                 src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
                 alt="Nova Logo" 
@@ -94,7 +94,7 @@ const Chat = () => {
     <div className="flex flex-col h-full">
       <div className="flex items-center p-5 border-b border-nova-dark-border">
         <div className="flex items-center">
-          <div className="h-6 w-6 rounded-full bg-nova-blue flex items-center justify-center mr-3 overflow-hidden">
+          <div className="h-6 w-6 rounded-full flex items-center justify-center mr-3 overflow-hidden">
             <img 
               src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
               alt="Nova Logo" 

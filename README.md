@@ -1,69 +1,69 @@
-# Welcome to your Lovable project
 
-## Project info
+# Nova Assistant - FICO Blaze Advisor
 
-**URL**: https://lovable.dev/projects/49892881-56aa-4a81-8184-1dff2e8184d7
+Este projeto consiste em uma interface de chat (frontend) desenvolvida em React que se comunica com uma API FastAPI (backend) para fornecer assistência especializada em FICO Blaze Advisor.
 
-## How can I edit this code?
+## Estrutura do Projeto
 
-There are several ways of editing your application.
+- `api/` - Código backend FastAPI
+- `src/` - Código frontend React
 
-**Use Lovable**
+## Requisitos
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/49892881-56aa-4a81-8184-1dff2e8184d7) and start prompting.
+### Backend (Python)
+- Python 3.8+
+- FastAPI
+- Uvicorn
+- Sentence Transformers
+- FAISS
+- OpenAI
+- Dotenv
 
-Changes made via Lovable will be committed automatically to this repo.
+### Frontend (React)
+- Node.js
+- npm ou yarn
 
-**Use your preferred IDE**
+## Configuração do Backend
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Crie um arquivo `.env` na raiz do projeto com sua chave de API OpenAI:
+   ```
+   OPENAI_API_KEY=sua_chave_aqui
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. Certifique-se de ter os arquivos FAISS necessários:
+   - `./FAISS/faiss_index.bin`
+   - `./FAISS/text_chunks.pkl`
 
-Follow these steps:
+3. Instale as dependências:
+   ```bash
+   pip install fastapi uvicorn sentence-transformers faiss-cpu openai python-dotenv
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+4. Execute o servidor:
+   ```bash
+   cd api
+   python main.py
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Configuração do Frontend
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+2. Execute o frontend:
+   ```bash
+   npm run dev
+   ```
 
-**Edit a file directly in GitHub**
+## Uso
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Inicie o servidor backend e o frontend
+2. Acesse a interface web e comece a fazer perguntas sobre FICO Blaze Advisor
+3. O sistema irá buscar informações relevantes na base de conhecimento (via FAISS) e gerar respostas usando o modelo GPT da OpenAI
 
-**Use GitHub Codespaces**
+## Observações
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/49892881-56aa-4a81-8184-1dff2e8184d7) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- Certifique-se de que o backend esteja rodando na porta 8000, que é a porta padrão que o frontend tenta se conectar.
+- Em produção, considere configurar adequadamente o CORS e usar variáveis de ambiente para URLs de API.

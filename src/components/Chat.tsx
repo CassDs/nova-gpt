@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, MessageSquarePlus } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
+import { chatService } from '../services/api';
 
 interface Message {
   id: string;
@@ -48,7 +49,7 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
                 : 'bg-nova-blue text-white'
             }`}
           >
-            <p className="text-sm">{message.content}</p>
+            <p className="text-sm whitespace-pre-line">{message.content}</p>
           </div>
         </div>
       </div>
@@ -108,7 +109,7 @@ const Chat = () => {
   };
 
   // Função para enviar mensagem
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim() || !currentConversationId) return;
 
     const now = new Date();
@@ -134,14 +135,19 @@ const Chat = () => {
 
     setConversations(updatedConversations);
     setInputValue('');
-    
-    // Simular resposta do assistente
     setIsLoading(true);
-    setTimeout(() => {
+    
+    try {
+      // Enviar mensagem para a API
+      const response = await chatService.sendMessage(
+        inputValue, 
+        currentConversationId
+      );
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Obrigado por sua mensagem. Como posso ajudar com FICO Blaze Advisor hoje?',
+        content: response.response,
         timestamp: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
       };
       
@@ -156,8 +162,31 @@ const Chat = () => {
           return conv;
         })
       );
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      
+      // Adicionar mensagem de erro
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
+        timestamp: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+      };
+      
+      setConversations(prevConversations => 
+        prevConversations.map(conv => {
+          if (conv.id === currentConversationId) {
+            return {
+              ...conv,
+              messages: [...conv.messages, errorMessage]
+            };
+          }
+          return conv;
+        })
+      );
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -236,12 +265,12 @@ const Chat = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={!currentConversation}
+            disabled={!currentConversation || isLoading}
             className="w-full bg-nova-dark-lighter border border-nova-dark-border text-white rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-nova-blue disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             onClick={handleSendMessage}
-            disabled={!currentConversation || !inputValue.trim()}
+            disabled={!currentConversation || !inputValue.trim() || isLoading}
             className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={18} />

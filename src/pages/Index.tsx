@@ -51,7 +51,9 @@ const Index = () => {
       {showIntro && <IntroEffect onComplete={handleIntroComplete} />}
       
       <div className={`flex h-screen overflow-hidden transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+        <div className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64 md:w-64' : 'w-0 md:w-16'}`}>
+          <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+        </div>
 
         <div className="flex-1 flex flex-col h-full relative">
           {/* Botão para abrir sidebar em telas pequenas */}

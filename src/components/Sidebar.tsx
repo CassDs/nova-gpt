@@ -29,7 +29,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   return (
     <div 
       className={`fixed md:relative z-20 flex flex-col h-full bg-nova-dark border-r border-nova-dark-border transition-all duration-300 ${
-        isOpen ? 'w-64 left-0' : 'w-0 -left-64 md:w-16 md:left-0'
+        isOpen 
+          ? 'w-64 left-0 opacity-100' 
+          : 'w-0 -left-64 md:w-16 md:left-0 md:opacity-100 opacity-0'
       }`}
     >
       <div className="flex items-center justify-between p-5 border-b border-nova-dark-border">
@@ -48,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         
         <button 
           onClick={onClose}
-          className="text-gray-400 hover:text-white p-1 rounded-full transition-colors"
+          className={`text-gray-400 hover:text-white p-1 rounded-full transition-colors ${!isOpen && 'md:hidden'}`}
         >
           <ChevronLeft size={18} />
         </button>

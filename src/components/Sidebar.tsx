@@ -27,14 +27,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   return (
-    <div 
-      className={`fixed md:relative z-20 flex flex-col h-full bg-nova-dark border-r border-nova-dark-border transition-all duration-300 ${
-        isOpen 
-          ? 'w-64 left-0 opacity-100 visible' 
-          : 'w-0 -left-64 md:w-16 md:left-0 md:opacity-100 opacity-0 md:visible invisible'
-      }`}
-      style={{ overflow: 'hidden' }}
-    >
+    <div className="fixed md:relative z-20 flex flex-col h-full w-full bg-nova-dark border-r border-nova-dark-border">
       <div className="flex items-center justify-between p-5 border-b border-nova-dark-border">
         <div className="flex items-center space-x-2 overflow-hidden">
           <div className="h-8 w-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-hidden">
@@ -44,20 +37,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               className="w-full h-full object-cover"
             />
           </div>
-          <span className={`font-semibold text-white transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 md:hidden'}`}>
+          <span className="font-semibold text-white">
             Nova Assistant
           </span>
         </div>
         
         <button 
           onClick={onClose}
-          className={`text-gray-400 hover:text-white p-1 rounded-full transition-colors ${!isOpen && 'md:hidden'}`}
+          className="text-gray-400 hover:text-white p-1 rounded-full transition-colors"
+          aria-label="Fechar menu lateral"
         >
           <ChevronLeft size={18} />
         </button>
       </div>
       
-      <div className={`flex-1 p-4 overflow-y-auto ${!isOpen && 'md:p-2'}`}>
+      <div className="flex-1 p-4 overflow-y-auto">
         <SidebarItem
           icon={<MessageCircle size={18} />}
           label="Nova conversa"

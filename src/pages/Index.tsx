@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Chat from '../components/Chat';
 import IntroEffect from '../components/IntroEffect';
-import { Menu, MessageSquarePlus } from 'lucide-react';
+import { Menu, ChevronRight } from 'lucide-react';
 
 const Index = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -51,16 +51,19 @@ const Index = () => {
       {showIntro && <IntroEffect onComplete={handleIntroComplete} />}
       
       <div className={`flex h-screen overflow-hidden transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        <div className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64 md:w-64' : 'w-0 md:w-16'} ${!sidebarOpen && 'hidden md:block'}`}>
-          <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
-        </div>
+        {sidebarOpen && (
+          <div className="transition-all duration-300 ease-in-out w-64">
+            <Sidebar isOpen={true} onClose={toggleSidebar} />
+          </div>
+        )}
 
         <div className="flex-1 flex flex-col h-full relative">
-          {/* Botão para abrir sidebar em telas pequenas */}
+          {/* Botão para abrir sidebar quando fechada */}
           {!sidebarOpen && (
             <button 
-              className="absolute top-4 left-4 z-30 p-2 rounded-full bg-nova-dark-lighter text-white md:hidden"
+              className="absolute top-4 left-4 z-30 p-2 rounded-full bg-nova-dark-lighter text-white"
               onClick={toggleSidebar}
+              aria-label="Abrir menu lateral"
             >
               <Menu size={20} />
             </button>

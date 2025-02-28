@@ -44,7 +44,7 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
           <div
             className={`px-4 py-3 rounded-lg ${
               message.role === 'assistant'
-                ? 'dark:bg-nova-dark-lighter dark:text-white light:bg-gray-200 light:text-gray-800'
+                ? 'dark:bg-nova-dark-lighter dark:text-white light:bg-blue-100 light:text-gray-800'
                 : 'bg-nova-blue text-white'
             }`}
           >
@@ -175,8 +175,8 @@ const Chat = () => {
   }, [currentConversation?.messages]);
 
   return (
-    <div className="flex flex-col h-full dark:bg-nova-dark light:bg-white">
-      <div className="flex items-center p-5 border-b dark:border-nova-dark-border light:border-gray-200">
+    <div className="flex flex-col h-full dark:bg-nova-dark light:bg-[#E0F2FF]">
+      <div className="flex items-center p-5 border-b dark:border-nova-dark-border light:border-blue-200">
         <div className="flex items-center">
           <div className="h-6 w-6 rounded-full flex items-center justify-center mr-3 overflow-hidden">
             <img 
@@ -217,7 +217,7 @@ const Chat = () => {
                       />
                     </div>
                   </div>
-                  <div className="px-4 py-3 rounded-lg dark:bg-nova-dark-lighter light:bg-gray-200">
+                  <div className="px-4 py-3 rounded-lg dark:bg-nova-dark-lighter light:bg-blue-100">
                     <LoadingSpinner size="sm" color="dark:border-white light:border-gray-600" />
                   </div>
                 </div>
@@ -228,7 +228,7 @@ const Chat = () => {
         )}
       </div>
 
-      <div className="p-4 border-t dark:border-nova-dark-border light:border-gray-200">
+      <div className="p-4 border-t dark:border-nova-dark-border light:border-blue-200">
         <div className="relative">
           <input
             type="text"
@@ -237,7 +237,7 @@ const Chat = () => {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={!currentConversation}
-            className="w-full dark:bg-nova-dark-lighter light:bg-gray-100 dark:border-nova-dark-border light:border-gray-300 dark:text-white light:text-gray-800 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-nova-blue disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full dark:bg-nova-dark-lighter light:bg-blue-50 dark:border-nova-dark-border light:border-blue-200 dark:text-white light:text-gray-800 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-nova-blue disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             onClick={handleSendMessage}

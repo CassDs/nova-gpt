@@ -17,7 +17,11 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
         {message.role === 'assistant' && (
           <div className="mr-3 mt-1">
             <div className="flex h-8 w-8 rounded-full bg-nova-blue items-center justify-center overflow-hidden">
-              <LoadingSpinner size="sm" color="border-white" />
+              <img 
+                src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
+                alt="Nova Logo" 
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         )}
@@ -57,7 +61,7 @@ const Chat = () => {
         {
           id: '1',
           role: 'assistant',
-          content: 'Olá! Sou o Nova, seu assistente de Python para FICO Blaze Advisor. Como posso ajudar você hoje?',
+          content: 'Olá! Sou o Nova, seu assistente para FICO Blaze Advisor. Como posso ajudar você hoje?',
           timestamp: '22:49'
         }
       ]);
@@ -90,8 +94,12 @@ const Chat = () => {
     <div className="flex flex-col h-full">
       <div className="flex items-center p-5 border-b border-nova-dark-border">
         <div className="flex items-center">
-          <div className="h-6 w-6 rounded-full bg-nova-blue flex items-center justify-center mr-3">
-            <LoadingSpinner size="sm" color="border-white" />
+          <div className="h-6 w-6 rounded-full bg-nova-blue flex items-center justify-center mr-3 overflow-hidden">
+            <img 
+              src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
+              alt="Nova Logo" 
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="text-white font-medium">Nova Assistant</span>
         </div>
@@ -104,8 +112,12 @@ const Chat = () => {
               <div className="inline-block mb-4">
                 <div className="relative">
                   <div className="h-16 w-16 rounded-full border-2 border-nova-blue opacity-50 animate-pulse-ring"></div>
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <LoadingSpinner size="lg" color="border-nova-blue" />
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full overflow-hidden">
+                    <img 
+                      src="/lovable-uploads/03b00a72-d506-4e46-b13c-f8bf29aef6c0.png" 
+                      alt="Nova Logo" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
               </div>

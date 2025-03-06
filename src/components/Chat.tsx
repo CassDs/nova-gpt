@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, MessageSquarePlus } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
@@ -93,12 +92,10 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Função para obter a conversa atual
   const currentConversation = currentConversationId 
     ? conversations.find(conv => conv.id === currentConversationId) 
     : null;
 
-  // Função para criar nova conversa
   const createNewConversation = () => {
     const newConversationId = Date.now().toString();
     const newConversation: Conversation = {
@@ -112,7 +109,6 @@ const Chat = () => {
     setCurrentConversationId(newConversationId);
   };
 
-  // Função para enviar mensagem
   const handleSendMessage = async () => {
     if (!inputValue.trim() || !currentConversationId) return;
 
@@ -126,7 +122,6 @@ const Chat = () => {
       timestamp
     };
 
-    // Adicionar mensagem do usuário
     const updatedConversations = conversations.map(conv => {
       if (conv.id === currentConversationId) {
         return {
@@ -142,7 +137,6 @@ const Chat = () => {
     setIsLoading(true);
     
     try {
-      // Enviar mensagem para a API
       const response = await chatService.sendMessage(
         inputValue, 
         currentConversationId
@@ -170,7 +164,6 @@ const Chat = () => {
       console.error('Erro ao enviar mensagem:', error);
       toast.error('Erro ao enviar mensagem, verifique se o backend está rodando');
       
-      // Adicionar mensagem de erro
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -201,7 +194,6 @@ const Chat = () => {
     }
   };
 
-  // Efeito para scrollar para o fim das mensagens
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });

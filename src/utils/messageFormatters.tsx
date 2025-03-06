@@ -26,9 +26,9 @@ export const formatMessageWithCodeBlocks = (content: string): React.ReactNode[] 
     if (match.index > lastIndex) {
       const textBeforeCode = content.substring(lastIndex, match.index);
       elements.push(
-        <ReactMarkdown key={`md-${lastIndex}`} className="markdown-content">
-          {textBeforeCode}
-        </ReactMarkdown>
+        <div key={`md-${lastIndex}`} className="markdown-content">
+          <ReactMarkdown>{textBeforeCode}</ReactMarkdown>
+        </div>
       );
     }
 
@@ -74,9 +74,9 @@ export const formatMessageWithCodeBlocks = (content: string): React.ReactNode[] 
   if (lastIndex < content.length) {
     const textAfterCode = content.substring(lastIndex);
     elements.push(
-      <ReactMarkdown key={`md-last`} className="markdown-content">
-        {textAfterCode}
-      </ReactMarkdown>
+      <div key={`md-last`} className="markdown-content">
+        <ReactMarkdown>{textAfterCode}</ReactMarkdown>
+      </div>
     );
   }
 

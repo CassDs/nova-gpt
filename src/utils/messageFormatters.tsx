@@ -29,14 +29,23 @@ export const formatMessageWithCodeBlocks = (content: string): React.ReactNode[] 
       elements.push(formatInlineCode(textBeforeCode));
     }
 
-    const language = match[1] || 'javascript'; // Default to javascript if no language specified
+    // Get the language, defaulting to 'java' for SRL or plaintext
+    let language = match[1] || 'javascript';
+    let displayLanguage = language;
+    
+    // Handle SRL language (treat as Java for syntax highlighting but display as SRL)
+    if (language === 'plaintext' || language === '') {
+      language = 'java'; // Use Java highlighting for SRL
+      displayLanguage = 'SRL';
+    }
+    
     const code = match[2];
 
     // Add syntax highlighted code block
     elements.push(
       <div key={`code-${match.index}`} className="rounded-md overflow-hidden my-2">
         <div className="bg-gray-800 text-gray-300 text-xs px-3 py-1 flex justify-between items-center">
-          <span>{language}</span>
+          <span>{displayLanguage}</span>
           <button 
             className="text-gray-400 hover:text-white" 
             onClick={() => navigator.clipboard.writeText(code)}

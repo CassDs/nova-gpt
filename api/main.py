@@ -40,7 +40,7 @@ conversations = {}
 
 # Carregar FAISS e embeddings
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FAISS_INDEX_PATH = os.path.join(BASE_DIR, "FAISS/index.faiss")
+FAISS_INDEX_PATH = os.path.join(BASE_DIR, "FAISS/faiss_index.bin")
 METADATA_PATH = os.path.join(BASE_DIR, "FAISS/text_chunks.pkl")
 
 def load_faiss_index(index_path, metadata_path):
@@ -137,6 +137,7 @@ def generate_response(query, retrieved_texts, conversation_id):
     - Sempre explique as melhorias feitas ao código, se aplicável.
     - Se a solicitação do usuário não puder ser respondida com base no contexto, responda apenas: "Não encontrei essa informação no material."
     - Nunca invente informações que não estejam no contexto.
+    - A linguagem SLR sempre termina com ";" se atente a isso.
 
     **Resposta:**
     """

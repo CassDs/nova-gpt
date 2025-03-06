@@ -31,6 +31,7 @@ pre::-webkit-scrollbar-thumb:hover {
   font-family: monospace;
   padding: 0.2em 0.4em;
   margin: 0 0.2em;
+  text-decoration: none;
 }
 
 /* Markdown styling */
@@ -87,7 +88,7 @@ pre::-webkit-scrollbar-thumb:hover {
 
 .markdown-content a {
   color: #3b82f6;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .markdown-content code {
@@ -96,6 +97,7 @@ pre::-webkit-scrollbar-thumb:hover {
   font-family: monospace;
   padding: 0.2em 0.4em;
   margin: 0 0.2em;
+  text-decoration: none;
 }
 
 .markdown-content blockquote {

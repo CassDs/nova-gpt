@@ -2,6 +2,7 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 /**
  * Detects code blocks in a message and returns React elements with syntax highlighting
@@ -13,28 +14,30 @@ export const formatMessageWithCodeBlocks = (content: string): React.ReactNode[] 
   // Format: ```language\ncode\n```
   const codeBlockRegex = /```([a-z]*)\n([\s\S]*?)```/g;
   
-  // Regex to match inline code
-  const inlineCodeRegex = /`([^`]+)`/g;
-  
+  // For messages from the assistant, we want to apply markdown outside of code blocks
+  // We'll split the content into segments: text, code, text, code, etc.
   let lastIndex = 0;
   const elements: React.ReactNode[] = [];
   let match;
 
   // Process code blocks
   while ((match = codeBlockRegex.exec(content)) !== null) {
-    // Add text before code block
+    // Add text before code block (with markdown)
     if (match.index > lastIndex) {
       const textBeforeCode = content.substring(lastIndex, match.index);
-      // Process any inline code in text segments
-      elements.push(formatInlineCode(textBeforeCode));
+      elements.push(
+        <ReactMarkdown key={`md-${lastIndex}`} className="markdown-content">
+          {textBeforeCode}
+        </ReactMarkdown>
+      );
     }
 
     // Get the language, defaulting to 'java' for SRL or plaintext
-    let language = match[1] || 'javascript';
+    let language = match[1] || 'plaintext';
     let displayLanguage = language;
     
     // Handle SRL language (treat as Java for syntax highlighting but display as SRL)
-    if (language === 'plaintext' || language === '') {
+    if (language === 'srl' || language === 'plaintext' || language === '') {
       language = 'java'; // Use Java highlighting for SRL
       displayLanguage = 'SRL';
     }
@@ -67,10 +70,14 @@ export const formatMessageWithCodeBlocks = (content: string): React.ReactNode[] 
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text
+  // Add remaining text (with markdown)
   if (lastIndex < content.length) {
     const textAfterCode = content.substring(lastIndex);
-    elements.push(formatInlineCode(textAfterCode));
+    elements.push(
+      <ReactMarkdown key={`md-last`} className="markdown-content">
+        {textAfterCode}
+      </ReactMarkdown>
+    );
   }
 
   return elements;

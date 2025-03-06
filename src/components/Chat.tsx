@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Send, MessageSquarePlus } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 import { chatService } from '../services/api';
+import { formatMessageWithCodeBlocks } from '../utils/messageFormatters';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -49,7 +51,9 @@ const ChatBubble: React.FC<{ message: Message }> = ({ message }) => {
                 : 'bg-nova-blue text-white'
             }`}
           >
-            <p className="text-sm whitespace-pre-line">{message.content}</p>
+            <div className="text-sm">
+              {formatMessageWithCodeBlocks(message.content)}
+            </div>
           </div>
         </div>
       </div>
@@ -164,12 +168,13 @@ const Chat = () => {
       );
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
+      toast.error('Erro ao enviar mensagem, verifique se o backend está rodando');
       
       // Adicionar mensagem de erro
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
+        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, verifique se o backend está rodando e tente novamente.',
         timestamp: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
       };
       
